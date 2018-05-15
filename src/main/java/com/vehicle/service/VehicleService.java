@@ -15,7 +15,6 @@ import com.vehicle.model.Vehicle;
 import com.vehicle.model.VehicleCategory;
 import com.vehicle.model.VehicleResponse;
 
-
 @Service
 public class VehicleService {
 
@@ -32,10 +31,11 @@ public class VehicleService {
 		}
 		return VehicleResponse.builder()
 				.vehicle(vehicleResult.get())
-				.response(Response.builder().code(200)
-						.message("Success")
-						.source("Vehicle-Inventory")
-						.build())
+				.response(Response.builder()
+				.code(200)
+				.message("Success")
+				.source("Vehicle-Inventory")
+				.build())
 				.build();
 
 	}
@@ -61,11 +61,12 @@ public class VehicleService {
 			break;
 
 		}
-		Optional<VehicleCategory> vehicleCategory  = vehicleCategoryRepository.findById(typeId);
+		Optional<VehicleCategory> vehicleCategory = vehicleCategoryRepository.findById(typeId);
 		if (!vehicleCategory.isPresent()) {
 			throw new InvalidRequest("Invalid Vehicle Type.");
 		}
-		Vehicle vehicle = Vehicle.builder().vehicleCategory(vehicleCategory.get())
+		Vehicle vehicle = Vehicle.builder()
+				.vehicleCategory(vehicleCategory.get())
 				.make(vehicleRequest.getMake())
 				.model(vehicleRequest.getModel())
 				.vinNumber(vehicleRequest.getVinNumber())
@@ -77,17 +78,25 @@ public class VehicleService {
 
 	}
 
-	public Vehicle updateVehicle(Vehicle updateVehicle) {
-		Optional<Vehicle> vehicle  = vehicleRepository.findById(updateVehicle.getId());
-		if (!vehicle.isPresent()) {
-			throw new InvalidRequest("Invalid Vehicle Type.");
+	public Vehicle updateVehicle(Vehicle vehicle) {
+		Optional<Vehicle> savedVehicle = vehicleRepository.findById(vehicle.getId());
+		if (!savedVehicle.isPresent()) {
+			throw new InvalidRequest("Invalid Update : Vehicle does not exist with the given details.");
 		}
-		vehicleRepository.save(updateVehicle);		
-		return updateVehicle;
+		vehicle.setCreatedDate(new Date());
+		Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+		return updatedVehicle;
 	}
 
-	public void delete(Long id) {
+	public VehicleResponse delete(Long id) {
 		vehicleRepository.deleteById(id);
+		return VehicleResponse.builder()
+				.response(Response.builder()
+				.code(200)
+				.message("Success")
+				.source("Vehicle-Inventory")
+				.build())
+				.build();
 	}
 
 }

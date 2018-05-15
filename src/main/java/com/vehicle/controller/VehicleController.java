@@ -27,7 +27,6 @@ public class VehicleController {
 
 	@GetMapping("/vechicle/search")
 	public VehicleResponse seachVechicleById(@RequestHeader(name = "id") Long id) {
-		validator.validateGetRequest(id);
 		VehicleResponse vehicleResponse = vehicleService.getVehicleDetails(id);
 		return vehicleResponse;
 	}
@@ -39,13 +38,13 @@ public class VehicleController {
 	}
 
 	@PutMapping("/vechicle/modify")
-	public Vehicle updateVehicle(@RequestBody Vehicle vehicle) {
-		return vehicleService.updateVehicle(vehicle);
-
+	public Vehicle updateVehicle(@RequestBody Vehicle vehicleRequest) {
+		validator.validateVehicleRequest(vehicleRequest);
+		return vehicleService.updateVehicle(vehicleRequest);
 	}
 
 	@DeleteMapping("/vechicle/delete")
-	public void deleteVehicleById(@RequestHeader(name = "id") Long id) {
-		vehicleService.delete(id);
+	public VehicleResponse deleteVehicleById(@RequestHeader(name = "id") Long id) {
+		return vehicleService.delete(id);
 	}
 }

@@ -16,9 +16,4 @@ public class Validator {
 		}
 
 	}
-
-	public void validateGetRequest(Long id) {
-
-	}
-
 }
